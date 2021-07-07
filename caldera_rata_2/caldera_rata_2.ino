@@ -39,7 +39,7 @@ void loop() {
             ((fecha.hour() >= horaON2) && (fecha.hour() < horaOFF2))) && (estado_termo==0)) {
             termoON();
         } else if((((fecha.hour() < horaON)   || (fecha.hour() >= horaOFF)) && 
-                      ((fecha.hour() < horaON2) || (fecha.hour() >= horaOFF2))) && (estado_termo==1)) {
+                   ((fecha.hour() < horaON2) || (fecha.hour() >= horaOFF2))) && (estado_termo==1)) {
             termoOFF();
         }
         previoMillisLoop = millis();
