@@ -25,10 +25,6 @@ void setup() {
   estado_termo = 0;
 
 }
-//Serial.begin(9600);
-//reloj.adjust(DateTime(__DATE__, __TIME__));
-//DateTime dt(2021, 7, 5, 17, 32, 0);
-//reloj.adjust(dt); 
 
 void loop() {
   if(start) {
@@ -106,62 +102,3 @@ void termoOFF() {
   } while (cont < 4);
   estado_termo = 0;
 }
-
-//En caso de ser necesario mostrar hora, este codigo añade un 0 a los valores menores a 10
-//String getHora(char var) {
-//  switch (var) {
-//    case 'h':
-//      if(fecha.hour() < 10) {
-//        return ('0'+(String)fecha.hour()); break;
-//        } else {
-//          return (String)fecha.hour();break;
-//        }
-//    case 'm':
-//      if(fecha.minute() <10) {
-//        return ('0'+(String)fecha.minute()); break;
-//        } else {
-//          return (String)fecha.minute();break;
-//      }
-//    case 's':
-//      if(fecha.second() <10) {
-//        return ('0'+(String)fecha.second()); break;
-//        } else {
-//          return (String)fecha.second();break;
-//      }
-//    case 'd':
-//      if(fecha.day() <10) {
-//        return ('0'+(String)fecha.day()); break;
-//        } else {
-//          return (String)fecha.day();break;
-//      }
-//    case 'n':
-//      if(fecha.month() <10) {
-//        return ('0'+(String)fecha.month()); break;
-//        } else {
-//          return (String)fecha.month();break;
-//      }
-//    case 'a':
-//      if(fecha.year() <10) {
-//        return ('0'+(String)fecha.year()); break;
-//        } else {
-//          return (String)fecha.year();break;
-//      }
-//  }
-//}
-
-// Enviar hora y fecha por puerto serie
-//void printFecha() {
-//  Serial.print(getHora('d'));
-//  Serial.print("/");
-//  Serial.print(getHora('n'));
-//  Serial.print("/");
-//  Serial.print(getHora('a'));
-//  Serial.print("  ");
-//  Serial.print(getHora('h'));
-//  Serial.print(":");
-//  Serial.print(getHora('m'));
-//  Serial.print(":");
-//  Serial.println(getHora('s'));
-//  Serial.println("Día de la semana: ");
-//  Serial.println((String)fecha.dayOfTheWeek());
-//}
