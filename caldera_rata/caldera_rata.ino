@@ -23,8 +23,8 @@ void setup() {
     reloj.begin();
     start=1;
     estado_termo=0;
+    //reloj.adjust(DateTime(__DATE__, __TIME__));
 }
-//reloj.adjust(DateTime(__DATE__, __TIME__));
 
 void loop() {
     if(start) {
@@ -37,45 +37,17 @@ void loop() {
         fecha = reloj.now();
         if((((fecha.hour() >= horaON)   && (fecha.hour() < horaOFF)) ||
             ((fecha.hour() >= horaON2) && (fecha.hour() < horaOFF2))) && (estado_termo==0)) {
-            termoON();
+            termoACC(120, 110);
         } else if((((fecha.hour() < horaON)   || (fecha.hour() >= horaOFF)) && 
                    ((fecha.hour() < horaON2) || (fecha.hour() >= horaOFF2))) && (estado_termo==1)) {
-            termoOFF();
+            termoACC(45, 62);
         }
         previoMillisLoop = millis();
     }
 }
-        
-// Secuencias de encendido y apagado de Caldera
-void termoON() {
-    myservo_X.write(120);
-    espera=0;
-    cont=0;
-    previoMillisTermo=millis();
-    do{
-        actualMillis=millis();
-        if(espera==0) {
-            if((unsigned long)(actualMillis - previoMillisTermo) >= 500) {
-                myservo_X.write(110);
-                previoMillisTermo=millis();
-                espera=1;
-                cont++;
-            }
-        }
-        if(espera==1) {
-            if((unsigned long)(actualMillis - previoMillisTermo) >= 500) {
-                myservo_X.write(120);
-                previoMillisTermo=millis();
-                espera=0;
-                cont++;
-            }
-        }
-    } while(cont<4);
-    estado_termo=1;
-}
 
-void termoOFF() {
-    myservo_X.write(45);
+void termoACC(byte pos1, byte pos2) {
+    myservo_X.write(pos1);
     espera=0;
     cont=0;
     previoMillisTermo=millis();
@@ -83,7 +55,7 @@ void termoOFF() {
         actualMillis=millis();
         if(espera==0) {
             if ((unsigned long)(actualMillis - previoMillisTermo) >= 500) {
-                myservo_X.write(62);
+                myservo_X.write(pos2);
                 previoMillisTermo=millis();
                 espera=1;
                 cont++;
@@ -91,12 +63,13 @@ void termoOFF() {
         }
         if(espera==1) {
             if ((unsigned long)(actualMillis - previoMillisTermo) >= 500) {
-                myservo_X.write(45);
+                myservo_X.write(pos1);
                 previoMillisTermo=millis();
                 espera=0;
                 cont++;
             }
         }
     } while (cont<4);
-    estado_termo=0;
+    estado_termo=!estado_termo;
 }
+
