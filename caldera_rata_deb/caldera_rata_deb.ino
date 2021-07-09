@@ -38,10 +38,9 @@ void setup() {
     reloj.begin();
     //setVarControl(); // Provisorio, a dividir segun control horario, posiciones. futuras vars
     estado_termo=0;
-    setVarControl();
     variablesControl();
     start=1;
-    ajustaReloj(2021, 7, 8, 5, 30, 0);
+    ajustaReloj(2021, 7, 8, 4, 59, 50);
     //reloj.adjust(DateTime(__DATE__, __TIME__));
 }
 
@@ -54,6 +53,7 @@ void loop() {
     actualMillis = millis();
     if ((unsigned long)(actualMillis - previoMillisLoop) >= intervalo_loop) {
         printFecha();
+        printVars();
         fecha = reloj.now();
         if((((fecha.hour() >= horaON1)   && (fecha.hour() < horaOFF1)) ||
             ((fecha.hour() >= horaON2) && (fecha.hour() < horaOFF2))) && (estado_termo==0)) {
@@ -124,15 +124,7 @@ void variablesControl() {
     posON2 = EEPROM.read(dirPosON2);
     posOFF1 = EEPROM.read(dirPosOFF1);
     posOFF2 = EEPROM.read(dirPosOFF2);
-    Serial.println("Variables: ");
-    Serial.println((String)horaON1);
-    Serial.println((String)horaOFF1);
-    Serial.println((String)horaON2);
-    Serial.println((String)horaOFF2);
-    Serial.println((String)posON1);
-    Serial.println((String)posON2);
-    Serial.println((String)posOFF1);
-    Serial.println((String)posOFF2);
+
 
 }
 
@@ -195,7 +187,14 @@ void printFecha() {
   Serial.print(":");
   Serial.print(getHora('m'));
   Serial.print(":");
-  Serial.println(getHora('s'));
-  Serial.println("Día de la semana: ");
+  Serial.print(getHora('s'));
+  Serial.print(" Día de la semana: ");
   Serial.println((String)fecha.dayOfTheWeek());
+}
+
+void printVars() {
+    Serial.println("Variables: "+(String)horaON1+", "+(String)horaOFF1+", "+
+                                 (String)horaON2+", "+(String)horaOFF2+", "+
+                                 (String)posON1+", "+(String)posON2+", "+
+                                 (String)posOFF1+", "+(String)posOFF2);
 }
