@@ -15,7 +15,7 @@ Servo myservo_X;
 RTC_DS3231 reloj;
 
 volatile DateTime fecha;
-unsigned long intervalo_loop=5000;
+unsigned long intervalo_loop=2500;
 unsigned long previoMillisTermo=0;
 unsigned long previoMillisLoop=0;
 unsigned long actualMillis;
@@ -27,18 +27,23 @@ byte posON1;
 byte posON2;
 byte posOFF1;
 byte posOFF2;
+byte posTEMP;
 byte cont;
 bool estado_termo;
 bool espera;
+bool espera_man;
 bool start;
+byte manual;
+byte estado;
+byte hr, mn, sg, di, me;
+int an;
 
 void setup() {
     Serial.begin(9600);
     myservo_X.attach(9);
     reloj.begin();
-    //setVarControl(); // Provisorio, a dividir segun control horario, posiciones. futuras vars
+    estado=1;
     estado_termo=0;
-    variablesControl();
     start=1;
     ajustaReloj(2021, 7, 8, 4, 59, 50);
     //reloj.adjust(DateTime(__DATE__, __TIME__));
@@ -47,25 +52,151 @@ void setup() {
 void loop() {
     if(start) {
         myservo_X.write(30);
-        start=0;
         fecha=reloj.now();
+        cargarVarsControl();
+        start=0;
     }
     actualMillis = millis();
     if ((unsigned long)(actualMillis - previoMillisLoop) >= intervalo_loop) {
         printFecha();
         printVars();
         fecha = reloj.now();
-        if((((fecha.hour() >= horaON1)   && (fecha.hour() < horaOFF1)) ||
-            ((fecha.hour() >= horaON2) && (fecha.hour() < horaOFF2))) && (estado_termo==0)) {
-            termoACC(posON1, posON2);
-            Serial.println("TERMO ON");
-        } else if((((fecha.hour() < horaON1)   || (fecha.hour() >= horaOFF1)) && 
-                   ((fecha.hour() < horaON2) || (fecha.hour() >= horaOFF2))) && (estado_termo==1)) {
-            termoACC(posOFF1, posOFF2);
-            Serial.println("TERMO OFF");
+        switch(estado) {
+            case 1:
+                Serial.println(estado);
+                if((((fecha.hour() >= horaON1)   && (fecha.hour() < horaOFF1)) ||
+                    ((fecha.hour() >= horaON2) && (fecha.hour() < horaOFF2))) && (estado_termo==0)) {
+                    termoACC(posON1, posON2);
+                    Serial.println("TERMO ON");
+                } else if((((fecha.hour() < horaON1)   || (fecha.hour() >= horaOFF1)) && 
+                           ((fecha.hour() < horaON2) || (fecha.hour() >= horaOFF2))) && (estado_termo==1)) {
+                    termoACC(posOFF1, posOFF2);
+                    Serial.println("TERMO OFF");
+                }
+                //previoMillisLoop = millis();
+                break;
+            case 2:
+                // ajustaReloj
+                //validar
+                ajustaReloj(an, me, di, hr, mn, sg);
+                estado = 1;
+                break;
+            case 3:
+                // ajuste horas de funcionamiento
+                // validar
+                EEPROM.put(dirHoraON1, horaON1);
+                EEPROM.put(dirHoraOFF1, horaOFF1);
+                EEPROM.put(dirHoraON2, horaON2);
+                EEPROM.put(dirHoraOFF2, horaOFF2);
+                cargarVarsControl();
+                estado = 1;
+                break;
+            case 4:
+                // ajustaPosServo
+                // validar
+                EEPROM.put(dirPosON1, posON1);
+                EEPROM.put(dirPosON2, posON2);
+                EEPROM.put(dirPosOFF1, posOFF1); 
+                EEPROM.put(dirPosOFF2, posOFF2);
+                cargarVarsControl();
+                estado = 1;
+                break;
+            case 5:
+                if(espera_man) {
+                    if(manual == 1) {
+                        termoACC(posON1, posON2);
+                    } else if (manual == 0){
+                        termoACC(posOFF1, posOFF2);
+                    }
+                    espera_man=0;
+                }
+                break;
+            case 6:
+                myservo_X.write(posTEMP);
+                // funcionamiento 'externo'
+                // debe reaccionar a los parametros enviados por Serial
+                // movimiento libre, termoACC, ajustaReloj, configs, etc.
+                //previoMillisLoop = millis();
+                estado_termo=0;
+                break;
+            default:
+                estado=1;
         }
+        leerDatos();
         previoMillisLoop = millis();
     }
+}
+
+void leerDatos() {
+    if (Serial.available() > 0) {
+        byte temp_var=0;
+        temp_var = Serial.readStringUntil(',').toInt();
+        if(temp_var < 7 && temp_var > 0){
+            estado = temp_var;
+        } else {
+            estado = 1;
+        }
+        switch (estado) {
+            case 1:
+                limpiaSerial(); 
+                break;
+            case 2:
+                di = Serial.readStringUntil(',').toInt();
+                me = Serial.readStringUntil(',').toInt();
+                an = Serial.readStringUntil(',').toInt();
+                hr = Serial.readStringUntil(',').toInt();
+                mn = Serial.readStringUntil(',').toInt();
+                sg = Serial.readStringUntil(',').toInt();
+                break;
+            case 3:
+                horaON1 = Serial.readStringUntil(',').toInt();
+                horaOFF1 = Serial.readStringUntil(',').toInt();
+                horaON2 = Serial.readStringUntil(',').toInt();
+                horaOFF2 = Serial.readStringUntil(',').toInt();
+                break;
+            case 4:
+                posON1 = Serial.readStringUntil(',').toInt();
+                posON2 = Serial.readStringUntil(',').toInt();
+                posOFF1 = Serial.readStringUntil(',').toInt();
+                posOFF2 = Serial.readStringUntil(',').toInt();
+                break;
+            case 5:
+                manual = Serial.readStringUntil(',').toInt();
+                espera_man = 1;
+                break;
+            case 6:
+                posTEMP = Serial.readStringUntil(',').toInt();
+                break;
+            default:
+                limpiaSerial();
+        }
+        limpiaSerial();
+    } else {
+        Serial.println("Nada q hacer");
+    }
+}
+
+
+
+void limpiaSerial() {
+    while(Serial.available() > 0) {
+        char temp = Serial.read();
+    }
+}
+
+//como bash: cut d',' -f 0,1,.. file
+String getValue(String data, char separator, int index){
+    int found = 0;
+    int strIndex[] = { 0, -1 };
+    int maxIndex = data.length() - 1;
+    for (int i = 0; i <= maxIndex && found <= index; i++) {
+        if (data.charAt(i) == separator || i == maxIndex) {
+            found++;
+            strIndex[0] = strIndex[1] + 1;
+            strIndex[1] = (i == maxIndex) ? i+1 : i;
+        }
+    }
+    return found > index ? data.substring(strIndex[0], strIndex[1]) : "";
 }
 
 void termoACC(byte pos1, byte pos2) {
@@ -95,27 +226,8 @@ void termoACC(byte pos1, byte pos2) {
     estado_termo=!estado_termo;
 }
 
-// provisorio, case config para hora, horas o dias, posiciones, etc.
-void setVarControl() {
-    //horaON1 = 5;
-    //horaOFF1 = 7;
-    //horaON2 = 16;
-    //horaOFF2 = 18;
-    //posON1 = 120;
-    //posON2 = 110;
-    //posOFF1 = 45;
-    //posOFF2 = 62;   
-    //EEPROM.put(dirHoraON1, horaON1);
-    //EEPROM.put(dirHoraOFF1, horaOFF1);
-    //EEPROM.put(dirHoraON2, horaON2);
-    //EEPROM.put(dirHoraOFF2, horaOFF2);
-    //EEPROM.put(dirPosON1,posON1);
-    //EEPROM.put(dirPosON2, posON2);
-    //EEPROM.put(dirPosOFF1, posOFF1); 
-    //EEPROM.put(dirPosOFF2, posOFF2);
-}
 
-void variablesControl() {
+void cargarVarsControl() {
     horaON1 = EEPROM.read(dirHoraON1);
     horaOFF1 = EEPROM.read(dirHoraOFF1);
     horaON2 = EEPROM.read(dirHoraON2);
@@ -124,8 +236,6 @@ void variablesControl() {
     posON2 = EEPROM.read(dirPosON2);
     posOFF1 = EEPROM.read(dirPosOFF1);
     posOFF2 = EEPROM.read(dirPosOFF2);
-
-
 }
 
 void ajustaReloj(int ano, byte mes, byte dia, byte hra, byte mins, byte segs ) {
