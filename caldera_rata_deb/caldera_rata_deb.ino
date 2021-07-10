@@ -226,18 +226,27 @@ void setVarsEP(){
         case 3:
             if(validaHR(horaON1)) {
                 EEPROM.put(dirHoraON1, horaON1);
+            } else {
+                horaON1 = EEPROM.read(dirHoraON1);
             }
-            if(validaHR(horaOFF1)) {
+            if(validaHR(horaOFF1) && horaOFF1 > horaON1) {
                 EEPROM.put(dirHoraOFF1, horaOFF1);
+            } else {
+                EEPROM.put(dirHoraOFF1, horaON1 + 1);
+                horaOFF1 = EEPROM.read(dirHoraOFF1);
             }
             if(validaHR(horaON2) && horaON2 > horaOFF1) {
                 EEPROM.put(dirHoraON2, horaON2);
             } else if(validaHR(horaON1)) {
                 EEPROM.put(dirHoraON2, horaON1);
-            } // validacion incompleta
-            if(validaHR(horaOFF2) && horaOFF2 > horaON2 && horaOFF2 > horaOFF1) {
+                EEPROM.put(dirHoraOFF2, horaOFF1);
+                horaON2 = EEPROM.read(dirHoraON2);
+                horaOFF2 = EEPROM.read(dirHoraOFF2);
+            }
+            if(validaHR(horaOFF2) && horaOFF2 > horaON2) {
                 EEPROM.put(dirHoraOFF2, horaOFF2);
-            } else if(validaHR(horaOFF1)) {
+            } else {
+                EEPROM.put(dirHoraON2, horaON1);
                 EEPROM.put(dirHoraOFF2, horaOFF1);
             }
             break;
