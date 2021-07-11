@@ -15,9 +15,10 @@ Servo myservo_X;
 RTC_DS3231 reloj;
 
 volatile DateTime fecha;
-unsigned long intervalo_loop=2500;
-unsigned long previoMillisTermo=0;
+unsigned long intervalo_loop=100;
 unsigned long previoMillisLoop=0;
+unsigned long previoMillisTermo=0;
+unsigned long previoMillisAUTO=0;
 unsigned long actualMillis;
 byte horaON1;
 byte horaOFF1;
@@ -63,17 +64,19 @@ void loop() {
         fecha = reloj.now();
         switch(estado) {
             case 1:
-                Serial.println(estado);
-                if((((fecha.hour() >= horaON1)   && (fecha.hour() < horaOFF1)) ||
-                    ((fecha.hour() >= horaON2) && (fecha.hour() < horaOFF2))) && (estado_termo==0)) {
-                    termoACC(posON1, posON2);
-                    Serial.println("TERMO ON");
-                } else if((((fecha.hour() < horaON1)   || (fecha.hour() >= horaOFF1)) && 
-                           ((fecha.hour() < horaON2) || (fecha.hour() >= horaOFF2))) && (estado_termo==1)) {
-                    termoACC(posOFF1, posOFF2);
-                    Serial.println("TERMO OFF");
+                if ((unsigned long)(actualMillis - previoMillisAUTO) >= 2000) {
+                    Serial.println(estado);
+                    if((((fecha.hour() >= horaON1)   && (fecha.hour() < horaOFF1)) ||
+                        ((fecha.hour() >= horaON2) && (fecha.hour() < horaOFF2))) && (estado_termo==0)) {
+                        termoACC(posON1, posON2);
+                        Serial.println("TERMO ON");
+                    } else if((((fecha.hour() < horaON1)   || (fecha.hour() >= horaOFF1)) && 
+                               ((fecha.hour() < horaON2) || (fecha.hour() >= horaOFF2))) && (estado_termo==1)) {
+                        termoACC(posOFF1, posOFF2);
+                        Serial.println("TERMO OFF");
+                    }
                 }
-                //previoMillisLoop = millis();
+                previoMillisAUTO = millis();
                 break;
             case 2:
                 // ajustaReloj
@@ -201,17 +204,18 @@ void termoACC(byte pos1, byte pos2) {
         if(espera==0) {
             if ((unsigned long)(actualMillis - previoMillisTermo) >= 500) {
                 myservo_X.write(pos2);
-                previoMillisTermo=millis();
                 espera=1;
                 cont++;
+                previoMillisTermo=millis();
             }
         }
+        actualMillis=millis();
         if(espera==1) {
             if ((unsigned long)(actualMillis - previoMillisTermo) >= 500) {
                 myservo_X.write(pos1);
-                previoMillisTermo=millis();
                 espera=0;
                 cont++;
+                previoMillisTermo=millis();
             }
         }
     } while (cont<4);
@@ -243,7 +247,7 @@ void setVarsEP(){
                 horaON2 = EEPROM.read(dirHoraON2);
                 horaOFF2 = EEPROM.read(dirHoraOFF2);
             }
-            if(validaHR(horaOFF2) && horaOFF2 > horaON2) {
+            if(validaHR(horaOFF2) && (horaOFF2 > horaON2) && (horaOFF2 > horaOFF1)) {
                 EEPROM.put(dirHoraOFF2, horaOFF2);
             } else {
                 EEPROM.put(dirHoraON2, horaON1);
