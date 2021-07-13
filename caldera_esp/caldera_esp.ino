@@ -1,7 +1,10 @@
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
-#include "ESP8266mDNS.h"
+#include <ESP8266mDNS.h>
+#include "confidencial.h"
+
+int loopcont;
 
 ESP8266WebServer server(80);
 
@@ -9,7 +12,7 @@ const int led = 13;
 
 void handleRoot() {
   digitalWrite(led, 1);
-  server.send(200, "text/plain", "Hola desde el esp01 (2)!");
+  server.send(200, "text/plain", "Hola desde el esp01! "+(String)loopcont);
   digitalWrite(led, 0);
 }
 
@@ -36,6 +39,7 @@ void setup(void) {
   Serial.begin(115200);
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
+  loopcont = 0;
   Serial.println("");
 
   // Wait for connection
@@ -67,5 +71,6 @@ void setup(void) {
 
 void loop(void) {
   server.handleClient();
+  loopcont+=1;
 }
 
