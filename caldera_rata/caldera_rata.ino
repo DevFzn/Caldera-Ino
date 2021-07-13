@@ -15,7 +15,7 @@ Servo myservo_X;
 RTC_DS3231 reloj;
 
 volatile DateTime fecha;
-unsigned long intervalo_loop=500;
+unsigned long intervalo_loop=1000;
 unsigned long previoMillisLoop=0;
 unsigned long previoMillisTermo=0;
 unsigned long previoMillisAUTO=0;
@@ -40,7 +40,7 @@ byte hr, mn, sg, di, me;
 int an;
 
 void setup() {
-    Serial.begin(9600);
+    Serial.begin(115200);
     myservo_X.attach(9);
     reloj.begin();
     estado=1;
@@ -62,7 +62,7 @@ void loop() {
         switch(estado) {
             case 1:
                 // funcionamiento autonomo, por defecto
-                if ((unsigned long)(actualMillis - previoMillisAUTO) >= 2000) {
+                if ((unsigned long)(actualMillis - previoMillisAUTO) >= 1000) {
                     if((((fecha.hour() >= horaON1)   && (fecha.hour() < horaOFF1)) ||
                         ((fecha.hour() >= horaON2) && (fecha.hour() < horaOFF2))) && (estado_termo==0)) {
                         termoACC(posON1, posON2);
