@@ -13,7 +13,7 @@ Trabaja de forma autonoma y/o comandado por puerto serie
 
 
 Arduino envia cada segundo los valores actuales de las variables de control.
-    ```
+```
     ej.
     1,0,5,7,16,18,120,90,45,62,1,42,24,14,7,2021
 
@@ -34,4 +34,4 @@ Arduino envia cada segundo los valores actuales de las variables de control.
     | | | |  |  |  |  |  |  |  |  |  |  | 7 > mes en RTC
     | | | |  |  |  |  |  |  |  |  |  |  | | 2021 > año en RTC
     1,0,5,7,16,18,120,90,45,62,1,42,24,14,7,2021
-    ```
+```
