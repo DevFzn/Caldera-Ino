@@ -66,9 +66,11 @@ void loop() {
                     if((((fecha.hour() >= horaON1)   && (fecha.hour() < horaOFF1)) ||
                         ((fecha.hour() >= horaON2) && (fecha.hour() < horaOFF2))) && (estado_termo==0)) {
                         termoACC(posON1, posON2);
+                        estado_termo=1;
                     } else if((((fecha.hour() < horaON1)   || (fecha.hour() >= horaOFF1)) && 
                                ((fecha.hour() < horaON2) || (fecha.hour() >= horaOFF2))) && (estado_termo==1)) {
                         termoACC(posOFF1, posOFF2);
+                        estado_termo=0;
                     }
                 }
                 previoMillisAUTO = millis();
@@ -95,8 +97,10 @@ void loop() {
                 if(espera_man) {
                     if(manual == 1) {
                         termoACC(posON1, posON2);
+                        estado_termo=1;
                     } else if (manual == 0){
                         termoACC(posOFF1, posOFF2);
+                        estado_termo=0;
                     }
                     espera_man=0;
                 }
@@ -118,48 +122,50 @@ void loop() {
 
 void leerDatos() {
     if (Serial.available() > 0) {
-        byte temp_var=0;
+        byte temp_var;
         temp_var = Serial.readStringUntil(',').toInt();
-        if(temp_var < 7 && temp_var > 0){
-            estado = temp_var;
-        } else {
-            estado = 1;
+        if(temp_var) {
+            if(temp_var < 7 && temp_var > 0){
+                estado = temp_var;
+            } else {
+                estado = 1;
+            }
+            switch (estado) {
+                case 1:
+                    limpiaSerial(); 
+                    break;
+                case 2:
+                    di = Serial.readStringUntil(',').toInt();
+                    me = Serial.readStringUntil(',').toInt();
+                    an = Serial.readStringUntil(',').toInt();
+                    hr = Serial.readStringUntil(',').toInt();
+                    mn = Serial.readStringUntil(',').toInt();
+                    sg = Serial.readStringUntil(',').toInt();
+                    break;
+                case 3:
+                    horaON1 = Serial.readStringUntil(',').toInt();
+                    horaOFF1 = Serial.readStringUntil(',').toInt();
+                    horaON2 = Serial.readStringUntil(',').toInt();
+                    horaOFF2 = Serial.readStringUntil(',').toInt();
+                    break;
+                case 4:
+                    posON1 = Serial.readStringUntil(',').toInt();
+                    posON2 = Serial.readStringUntil(',').toInt();
+                    posOFF1 = Serial.readStringUntil(',').toInt();
+                    posOFF2 = Serial.readStringUntil(',').toInt();
+                    break;
+                case 5:
+                    manual = Serial.readStringUntil(',').toInt();
+                    espera_man = 1;
+                    break;
+                case 6:
+                    posTEMP = Serial.readStringUntil(',').toInt();
+                    break;
+                default:
+                    limpiaSerial();
+            }
+            limpiaSerial();
         }
-        switch (estado) {
-            case 1:
-                limpiaSerial(); 
-                break;
-            case 2:
-                di = Serial.readStringUntil(',').toInt();
-                me = Serial.readStringUntil(',').toInt();
-                an = Serial.readStringUntil(',').toInt();
-                hr = Serial.readStringUntil(',').toInt();
-                mn = Serial.readStringUntil(',').toInt();
-                sg = Serial.readStringUntil(',').toInt();
-                break;
-            case 3:
-                horaON1 = Serial.readStringUntil(',').toInt();
-                horaOFF1 = Serial.readStringUntil(',').toInt();
-                horaON2 = Serial.readStringUntil(',').toInt();
-                horaOFF2 = Serial.readStringUntil(',').toInt();
-                break;
-            case 4:
-                posON1 = Serial.readStringUntil(',').toInt();
-                posON2 = Serial.readStringUntil(',').toInt();
-                posOFF1 = Serial.readStringUntil(',').toInt();
-                posOFF2 = Serial.readStringUntil(',').toInt();
-                break;
-            case 5:
-                manual = Serial.readStringUntil(',').toInt();
-                espera_man = 1;
-                break;
-            case 6:
-                posTEMP = Serial.readStringUntil(',').toInt();
-                break;
-            default:
-                limpiaSerial();
-        }
-        limpiaSerial();
     }
 }
 
@@ -197,7 +203,6 @@ void termoACC(byte pos1, byte pos2) {
             }
         }
     } while (cont<4);
-    estado_termo=!estado_termo;
 }
 
 void setVarsEP(){
