@@ -1,13 +1,15 @@
-ESP01
-=====
+## ESP01
 
-Archivo de configuracion ***confidencial.h***
+Establece comunicación serial con arduino (**115200 baudio**).  
+Interface web sencilla para consulta y configuraciones  
+
+Archivo de configuracion ***confidencial.h***  
 ```c
 const char* ssid = "SSID";
 const char* password = "password";
 ```
 
-## Urls
+#### Urls
 * '**/**' : muestra valores actuales de variables.
     - ej. http://192.168.65.10/
 * '**/accion**' : accionamiento manual, espera argumentos on u off.
@@ -22,4 +24,3 @@ const char* password = "password";
     - ej. http://192.168.65.10/setlibre?mod=6&pos=125
 * '**/auto**' : Modo autonomo.
     - ej. http://192.168.65.10/auto
-
