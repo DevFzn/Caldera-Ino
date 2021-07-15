@@ -1,18 +1,17 @@
-## Control de horarios de encendido caldera electrica
-Trabaja de forma autonoma y/o comandado por puerto serie
+## Control de horario de encendido caldera electrica
+Trabaja de forma autonoma y/o comandado por puerto serie (**115200 baudio**).    
 
-### 3 Modos de Operación
-    1) Automatizado (por defecto)
-    5) Manual
-    6) Libre
+* 3 Modos de Operación
+  - Automatizado (1, por defecto)
+  - Manual (5) 
+  - Libre (6)
+* 3 Modos de Configuracion
+  - Configuracion de fecha y hora (2)
+  - Configuracion horas de encendido y apagado (3)
+  - Configuracion de posiciones de encendido y apagado (4)
 
-### 3 Modos de Configuracion
-    2) Configuracion de fecha y hora
-    3) Configuracion horas de encendido y apagado
-    4) Configuracion de posiciones de encendido y apagado
 
-
-Arduino envia cada segundo los valores actuales de las variables de control.
+Arduino envia cada segundo los valores actuales de las variables de control al puerto serie.
 ```
     ej.
     1,0,5,7,16,18,120,90,45,62,1,42,24,14,7,2021
