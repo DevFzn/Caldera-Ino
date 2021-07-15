@@ -23,7 +23,7 @@ void handleACCmanual() {
             mensaje = "Apagando Caldera";
             Serial.println("5,0");
         } else {
-            mensaje = "Opcion no valida, 5,?";
+            mensaje = "Opcion no valida\n<mod=5&acc= >";
         }
     } else {
         mensaje = "Opcion no valida ?,?";

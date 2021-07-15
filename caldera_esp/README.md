@@ -17,9 +17,9 @@ const char* password = "password";
 * '**/horasAcc**' : configurar horas de funcionamiento.
     - ej. http://192.168.65.10/horasAcc?mod=3&hrOn1=5&hrOff1=7&hrOn2=16&hrOff2=18
 * '**/setservo**' : configurar posiciones de encendido y apagado.
-    - ej. http://192.168.65.10/setservo?mod=4
+    - ej. http://192.168.65.10/setservo?mod=4&posOn1=110&posOn2=85&posOff1=45&posOff2=62
 * '**/setlibre**' : Mover servo libremente (15 < posicion > 165).
-    - ej. http://192.168.65.10/setlibre?mod=6&posServ=125
+    - ej. http://192.168.65.10/setlibre?mod=6&pos=125
 * '**/auto**' : Modo autonomo.
     - ej. http://192.168.65.10/auto
 
