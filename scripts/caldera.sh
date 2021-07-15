@@ -4,55 +4,42 @@ IP_CALDERA="<IP_ESP01>"
 
 estado_caldera() {
     RESP=$(curl -s ${IP_CALDERA})
-    MODO=$(echo ${RESP} | cut -d',' -f 1)
-    ESTADO=$(echo ${RESP} | cut -d',' -f 2)
-    HR_ON1=$(echo ${RESP} | cut -d',' -f 3)
-    HR_OFF1=$(echo ${RESP} | cut -d',' -f 4)
-    HR_ON2=$(echo ${RESP} | cut -d',' -f 5)
-    HR_OFF2=$(echo ${RESP} | cut -d',' -f 6)
-    POS_ON1=$(echo ${RESP} | cut -d',' -f 7)
-    POS_ON2=$(echo ${RESP} | cut -d',' -f 8)
-    POS_OFF1=$(echo ${RESP} | cut -d',' -f 9)
-    POS_OFF2=$(echo ${RESP} | cut -d',' -f 10)
-    HRA=$(echo ${RESP} | cut -d',' -f 11)
-    MIN=$(echo ${RESP} | cut -d',' -f 12)
-    SEG=$(echo ${RESP} | cut -d',' -f 13)
-    DIA=$(echo ${RESP} | cut -d',' -f 14)
-    MES=$(echo ${RESP} | cut -d',' -f 15)
-    ANO=$(echo ${RESP} | cut -d',' -f 16)
-    echo "============================="
-    echo "    Estado Termo"
-    [[ ${ESTADO} = "1" ]] && echo "   - ENCENDIDO -"
-    [[ ${ESTADO} = "0" ]] && echo "   -  APAGADO  -"
-    echo -e "-----------------------------"
-    case $MODO in
+    arRS=(${RESP//,/ })
+    echo "=============================="
+    echo "         Estado Termo         "
+    [[ ${arRS[1]} = "1" ]] && echo "         - ENCENDIDO -        "
+    [[ ${arRS[1]} = "0" ]] && echo "         -  APAGADO  -        "
+    echo "------------------------------"
+    case ${arRS[0]} in
         '1')
-            echo "  Modo Automático"
+            echo "        Modo Automático       "
             ;;
         '5')
-            echo "  Modo Manual (esperando orden)"
+            echo "          Modo Manual         "
             ;;
         '6')
-            echo "  Modo Libre"
+            echo "          Modo Libre          "
             ;;
         *)
-            echo "  verificar conexión!"
+            echo "      verificar conexión!     "
             ;;
     esac
-    echo "  Hora : ${HRA}:${MIN}:${SEG}"
-    echo "  Fecha: ${DIA}/${MES}/${ANO}"
+    for i in {10..14}; do [[ ${arRS[${i}]} -lt 10 ]] && arRS[${i}]="0"${arRS[${i}]}; done
+    echo "     Hora  :   ${arRS[10]}:${arRS[11]}:${arRS[12]}"
+    echo "     Fecha :   ${arRS[13]}/${arRS[14]}/${arRS[15]}"
     echo -e "-------------------------------"
-    echo " 1ra Hora de encend.  : ${HR_ON1} hrs"
-    echo " 1ra Hora de apagado  : ${HR_OFF1} hrs"
-    echo " 2ra Hora de encend.  : ${HR_ON2} hrs"
-    echo " 2ra Hora de apagado  : ${HR_OFF2} hrs"
+    for i in {2..5}; do [[ ${arRS[${i}]} -lt 10 ]] && arRS[${i}]=" "${arRS[${i}]}; done
+    echo " 1ra Hora de encend.  : ${arRS[2]} hrs"
+    echo " 1ra Hora de apagado  : ${arRS[3]} hrs"
+    echo " 2ra Hora de encend.  : ${arRS[4]} hrs"
+    echo " 2ra Hora de apagado  : ${arRS[5]} hrs"
     echo -e "-------------------------------"
-    echo " 1ra Posición encendido: ${POS_ON1}"
-    echo " 2da Posición encendido: ${POS_ON2}"
-    echo " 1ra Posición apagado  : ${POS_OFF1}"
-    echo " 2da Posición apagado  : ${POS_OFF2}"
-    #echo -e "-----------------------------\n"
-    echo -e "=============================\n"
+    for i in {6..9}; do [[ ${arRS[${i}]} -lt 100 ]] && arRS[${i}]=" "${arRS[${i}]}; done
+    echo " 1ra Posición encend. :  ${arRS[6]}"
+    echo " 2da Posición encend. :  ${arRS[7]}"
+    echo " 1ra Posición apagado :  ${arRS[8]}"
+    echo " 2da Posición apagado :  ${arRS[9]}"
+    echo -e "===============================\n"
 }
 
 ejec_orden() {
@@ -103,7 +90,7 @@ principal() {
             curl -s "${IP_CALDERA}/auto"
             ;;
         "2")
-            echo "______________________________"
+            echo -e "______________________________\n"
             echo " Configuracion de fecha y hora"
             read -p "ingresa el DIA: " DIA
             read -p "ingresa el MES: " MES
@@ -114,7 +101,7 @@ principal() {
             ejec_orden 2 ${DIA} ${MES} ${ANO} ${HRA} ${MIN} ${SEG}
             ;;
         "3")
-            echo "______________________________"
+            echo -e "______________________________\n"
             echo " Conf. horas de funcionamiento"
             read -p " 1ra hora de encendido: " HR_ON1
             read -p " 1ra hora de apagado  : " HR_OFF1
@@ -124,7 +111,7 @@ principal() {
             ejec_orden 3 ${HR_ON1} ${HR_OFF1} ${HR_ON2} ${HR_OFF2}
             ;;
         "4")
-            echo "______________________________"
+            echo -e "______________________________\n"
             echo " Conf. posiciones del servo"
             read -p " 1ra posición encendido: " POS_ON1
             read -p " 2ra posición encendido: " POS_ON2
@@ -133,13 +120,13 @@ principal() {
             ejec_orden 4 ${POS_ON1} ${POS_ON2} ${POS_OFF1} ${POS_OFF2}
             ;;
         "5")
-            echo "_______________________" 
+            echo -e "______________________________\n"
             echo " Funcionamiento Manual "
             read -p " Encender o apagar (on/off) :" MANUAL
             ejec_orden 5 ${MANUAL}
             ;;
         "6")
-            echo "__________________" 
+            echo -e "______________________________\n"
             echo " Movimiento libre "
             read -p " ingresa posición (15<165):" MANUAL
             ejec_orden 6 ${MANUAL}
