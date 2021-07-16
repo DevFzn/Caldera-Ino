@@ -24,22 +24,16 @@ estado_caldera() {
             echo "      verificar conexión!     "
             ;;
     esac
+    echo "------------------------------"
     for i in {10..14}; do [[ ${arRS[${i}]} -lt 10 ]] && arRS[${i}]="0"${arRS[${i}]}; done
     echo "     Hora  :   ${arRS[10]}:${arRS[11]}:${arRS[12]}"
     echo "     Fecha :   ${arRS[13]}/${arRS[14]}/${arRS[15]}"
-    echo -e "-------------------------------"
+    echo "------------------------------"
     for i in {2..5}; do [[ ${arRS[${i}]} -lt 10 ]] && arRS[${i}]=" "${arRS[${i}]}; done
-    echo " 1ra Hora de encend.  : ${arRS[2]} hrs"
-    echo " 1ra Hora de apagado  : ${arRS[3]} hrs"
-    echo " 2ra Hora de encend.  : ${arRS[4]} hrs"
-    echo " 2ra Hora de apagado  : ${arRS[5]} hrs"
-    echo -e "-------------------------------"
-    for i in {6..9}; do [[ ${arRS[${i}]} -lt 100 ]] && arRS[${i}]=" "${arRS[${i}]}; done
-    echo " 1ra Posición encend. :  ${arRS[6]}"
-    echo " 2da Posición encend. :  ${arRS[7]}"
-    echo " 1ra Posición apagado :  ${arRS[8]}"
-    echo " 2da Posición apagado :  ${arRS[9]}"
-    echo -e "===============================\n"
+    echo "    Horario Temporizador   "
+    echo "    1)  ON: ${arRS[2]}    OFF: ${arRS[3]} "
+    echo "    2)  ON: ${arRS[4]}    OFF: ${arRS[5]} "
+    echo -e "==============================\n"
 }
 
 ejec_orden() {
@@ -55,12 +49,17 @@ ejec_orden() {
             ORD="/setservo?1=4&2=${2}&3=${3}&4=${4}&5=${5}"
             ;;
         5)
-            if [ ${2} = "on" ]
+            if [ ! -n ${2} ]
             then
-                ORD="/accion?1=5&2=on"
-            elif [ ${2} = "off" ]
-            then
-                ORD="/accion?1=5&2=off"
+                if [ ${2} = "on" ]
+                then
+                    ORD="/accion?1=5&2=on"
+                elif [ ${2} = "off" ]
+                then
+                    ORD="/accion?1=5&2=off"
+                fi
+            else 
+                return
             fi
             ;;
         6)
@@ -77,21 +76,27 @@ principal() {
     clear
     estado_caldera
     echo "  1) Funcionamiento Autonomo"
-    echo "  2) Configurar hora y fecha"
-    echo "  3) Conf. hrs. de funcionamiento"
-    echo "  4) Conf. posiciones de func."
-    echo "  5) Modo manual"
-    echo "  6) Modo libre"
+    echo "  2) Ajustar hora y fecha"
+    echo "  3) Ajustar termporizador"
+    echo "  4) Calibrar Servo"
+    echo "  5) Modo Manual"
+    echo "  6) Modo Libre"
     echo "  0) Salir"
     echo 
     read -p "  Ingresa Opcion :" OPC
     case ${OPC} in
         "1")
+            echo
             curl -s "${IP_CALDERA}/auto"
             ;;
         "2")
-            echo -e "______________________________\n"
-            echo " Configuracion de fecha y hora"
+            clear
+            echo "============================"
+            echo "  Valores Actuales en RTC    "
+            echo "    Hora  :   ${arRS[10]}:${arRS[11]}:${arRS[12]}"
+            echo "    Fecha :   ${arRS[13]}/${arRS[14]}/${arRS[15]}"
+            echo -e "============================\n"
+            echo -e " Configuracion fecha y hora \n"
             read -p "ingresa el DIA: " DIA
             read -p "ingresa el MES: " MES
             read -p "ingresa el AÑO: " ANO
@@ -101,8 +106,13 @@ principal() {
             ejec_orden 2 ${DIA} ${MES} ${ANO} ${HRA} ${MIN} ${SEG}
             ;;
         "3")
-            echo -e "______________________________\n"
-            echo " Conf. horas de funcionamiento"
+            clear
+            echo -e "=============================="
+            echo "    Horario Temporizador   "
+            echo "    1)  ON: ${arRS[2]}    OFF: ${arRS[3]} "
+            echo "    2)  ON: ${arRS[4]}    OFF: ${arRS[5]} "
+            echo -e "==============================\n"
+            echo -e "  ingresa nuevo horario  \n"
             read -p " 1ra hora de encendido: " HR_ON1
             read -p " 1ra hora de apagado  : " HR_OFF1
             echo " opcional"
@@ -111,24 +121,45 @@ principal() {
             ejec_orden 3 ${HR_ON1} ${HR_OFF1} ${HR_ON2} ${HR_OFF2}
             ;;
         "4")
-            echo -e "______________________________\n"
-            echo " Conf. posiciones del servo"
+            for i in {6..9}; do [[ ${arRS[${i}]} -lt 100 ]] && arRS[${i}]=" "${arRS[${i}]}; done
+            clear
+            echo -e "============================"
+            echo "    Configuración actual     "
+            echo "----------------------------"
+            echo "  1ra Posicion ON  : ${arRS[6]}"
+            echo "  2da Posición ON  : ${arRS[7]}"
+            echo "----------------------------"
+            echo "  1ra Posición OFF : ${arRS[8]}"
+            echo "  2da Posición OFF : ${arRS[9]}"
+            echo -e "============================\n"
+            echo -e "     Ingresar  valores      \n"
             read -p " 1ra posición encendido: " POS_ON1
             read -p " 2ra posición encendido: " POS_ON2
             read -p " 1ra posición apagado: " POS_OFF1
             read -p " 2ra posición apagado: " POS_OFF2
+            echo
             ejec_orden 4 ${POS_ON1} ${POS_ON2} ${POS_OFF1} ${POS_OFF2}
             ;;
         "5")
-            echo -e "______________________________\n"
-            echo " Funcionamiento Manual "
-            read -p " Encender o apagar (on/off) :" MANUAL
+            clear
+            echo -e "============================\n"
+            echo -e "    Accionamiento Manual    "
+            [[ ${arRS[1]} = "1" ]] && echo "        - ENCENDIDO -        "
+            [[ ${arRS[1]} = "0" ]] && echo "        -  APAGADO  -        "
+            echo -e "============================\n"
+            echo -e " Encender o apagar (on/off)\n" 
+            read -p " :" MANUAL
+            echo
             ejec_orden 5 ${MANUAL}
             ;;
         "6")
-            echo -e "______________________________\n"
-            echo " Movimiento libre "
-            read -p " ingresa posición (15<165):" MANUAL
+            clear
+            echo -e "============================\n"
+            echo -e "      Movimiento libre      \n"
+            echo -e "============================\n"
+            echo " ingresa posición (15<165):"
+            read -p " :" MANUAL
+            echo
             ejec_orden 6 ${MANUAL}
             ;;
         "0")
