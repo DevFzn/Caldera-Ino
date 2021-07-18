@@ -133,4 +133,4 @@ const char* password = "password";
 
 ### caldera.py
 
-![python_script](./script_python.png)
+![python_script](./scripts/script_python.png)
