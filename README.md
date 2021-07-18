@@ -101,8 +101,11 @@ const char* password = "password";
     - ej. http://192.168.65.10/auto
 -----
 
+## Utilidades  
+  Scripts para enviar peticiones web al ESP.
+
+
 ### caldera.sh
-  Script para enviar peticiones web al ESP.
 
 ```
 ==============================

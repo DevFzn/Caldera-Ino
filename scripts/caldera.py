@@ -14,7 +14,7 @@ except ModuleNotFoundError as ex:
     sleep(2)
     sys.exit()
 
-ESP01 = "http://192.168.31.247"
+ESP01 = "http://<IP_ESP>"
 clear = lambda: os.system('clear') if os.name == 'posix' else os.system('cls')
 
 def enviar_consulta(consulta):
@@ -293,5 +293,3 @@ while True:
         print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+"                           "+Style.RESET_ALL)
         sys.exit()
 
-
-#if __name__ == '__main__':
