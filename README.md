@@ -130,3 +130,7 @@ const char* password = "password";
   Ingresa Opcion :
 
 ```
+
+### caldera.py
+
+![python_script](./script_python.png)
