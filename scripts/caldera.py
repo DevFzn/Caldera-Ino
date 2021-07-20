@@ -202,6 +202,7 @@ while True:
             resp = consultas('/auto')
             print(Fore.MAGENTA+Back.BLUE+Style.BRIGHT+resp+Style.RESET_ALL)
             sleep(8)
+            intentos = 0
         elif opc == '2':
             pantallas('2',[res[10], res[11], res[12], res[13], res[14], res[15]])
             resp = consultas('/sethora', opc, solicita_dato((0,32),'        DIA       : '),
