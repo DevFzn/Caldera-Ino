@@ -11,18 +11,10 @@ estado_caldera() {
     [[ ${arRS[1]} = "0" ]] && echo "         -  APAGADO  -        "
     echo "------------------------------"
     case ${arRS[0]} in
-        '1')
-            echo "        Modo Automático       "
-            ;;
-        '5')
-            echo "          Modo Manual         "
-            ;;
-        '6')
-            echo "          Modo Libre          "
-            ;;
-        *)
-            echo "      verificar conexión!     "
-            ;;
+        '1')    echo "        Modo Automático       "   ;;
+        '5')    echo "          Modo Manual         "   ;;
+        '6')    echo "          Modo Libre          "   ;;
+        *)      echo "      verificar conexión!     "   ;;
     esac
     echo "------------------------------"
     for i in {10..14}; do [[ ${arRS[${i}]} -lt 10 ]] && arRS[${i}]="0"${arRS[${i}]}; done
@@ -39,35 +31,20 @@ estado_caldera() {
 ejec_orden() {
     ORD=""
     case $1 in
-        2)
-            ORD="/sethora?1=2&2=${2}&3=${3}&4=${4}&5=${5}&6=${6}&7=${7}"
-            ;;
-        3)
-            ORD="/horasAcc?1=3&2=${2}&3=${3}&4=${4}&5=${5}"
-            ;;
-        4)
-            ORD="/setservo?1=4&2=${2}&3=${3}&4=${4}&5=${5}"
-            ;;
-        5)
-            if [ ! -n ${2} ]
-            then
-                if [ ${2} = "on" ]
-                then
+        2)  ORD="/sethora?1=2&2=${2}&3=${3}&4=${4}&5=${5}&6=${6}&7=${7}"    ;;
+        3)  ORD="/horasAcc?1=3&2=${2}&3=${3}&4=${4}&5=${5}" ;;
+        4)  ORD="/setservo?1=4&2=${2}&3=${3}&4=${4}&5=${5}" ;;
+        5)  if [ -n ${2} ]; then
+                if [ ${2} = "on" ]; then
                     ORD="/accion?1=5&2=on"
-                elif [ ${2} = "off" ]
-                then
+                elif [ ${2} = "off" ]; then
                     ORD="/accion?1=5&2=off"
                 fi
             else 
                 return
-            fi
-            ;;
-        6)
-            ORD="/setlibre?1=6&2=${1}"
-            ;;
-        *)
-            ORD=""
-            ;;
+            fi  ;;
+        6)  ORD="/setlibre?1=6&2=${1}"  ;;
+        *)  ORD=""  ;;
       esac
       curl -s "${IP_CALDERA}${ORD}"
 }
@@ -85,10 +62,7 @@ principal() {
     echo 
     read -p "  Ingresa Opcion :" OPC
     case ${OPC} in
-        "1")
-            echo
-            curl -s "${IP_CALDERA}/auto"
-            ;;
+        "1")    echo; curl -s "${IP_CALDERA}/auto"  ;;
         "2")
             clear
             echo "============================"
@@ -162,9 +136,7 @@ principal() {
             echo
             ejec_orden 6 ${MANUAL}
             ;;
-        "0")
-            exit
-            ;;
+        "0")    exit    ;;
     esac
 sleep 8
 principal
