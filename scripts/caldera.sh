@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-IP_CALDERA="<IP_ESP01>"
+IP_CALDERA=$(grep URL config.cfg | cut -d'=' -f2)
 
 estado_caldera() {
     RESP=$(curl -s ${IP_CALDERA})

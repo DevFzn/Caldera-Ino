@@ -1,296 +1,176 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
+
 """
-    Script de control Caldera autmatizada Arduino+ESP01
+    Script de control Caldera automatizada [Arduino]+[ESP01]
 """
 import os
 import sys
 from time import sleep
+import configparser as cfg
+import vista_term as vt
+
+try:
+    parser = cfg.ConfigParser()
+    parser.read('config.cfg')
+    ESP01 = parser.get('esp01', 'URL')
+except cfg.Error as ex:
+    print('Error al leer archivo de configuración')
+    sys.exit()
+
 try:
     import requests
-    from colorama import Fore, Back, Style
 except ModuleNotFoundError as ex:
     print("Debes instalar los modulos necesarios\n")
     print(ex)
     sleep(2)
     sys.exit()
 
-ESP01 = "http://<IP_ESP>"
 clear = lambda: os.system('clear') if os.name == 'posix' else os.system('cls')
 
 def enviar_consulta(consulta):
+    """Retorna la respuesta a la petición GET *consulta*
+
+    :consulta: str ( consulta creada por consultas() )
+    :returns: str ( respuesta del GET request )
+    """
     resp = requests.get(consulta)
     return resp.text
 
-def consultas(modo, *args):
-    orden = '?'
-    for indx, arg in enumerate(args):
-        orden += str(indx+1)+'='+str(arg)+'&'
-    resp = enviar_consulta(ESP01+modo+orden[:-1])
+def consultas(modo, id_modo='', datos=['']):
+    """Crea la petición GET según si los datos son list o str
+    Retorna la respuesta de enviar_consulta()
+
+    :modo: str (sub-menu)
+    :id_modo: str (id modo de operacion)
+    :datos: list[str] | str
+    :returns: str (respuesta del GET request)
+    """
+    if id_modo != '':
+        modo = modo + '?1=' + id_modo
+    orden = ''
+    cont = 2
+    if type(datos) is list:
+        if len(datos) == 1:
+            orden = ''
+        else:
+            for dato in datos:
+                if dato != '':
+                    orden += '&' + str(cont) + '=' + str(dato)
+                    cont += 1
+    else:
+        orden += '&' + str(cont) + '=' + str(datos)
+    resp = enviar_consulta(ESP01 + modo + orden)
     return resp
 
-def pantallas(pantalla, vals):
-    if pantalla == '':
-        if vals[0] == '\n1':
-            vals[0] = '  AUTO     '
-        elif vals[0] == '\n5':
-            vals[0] = '  MANUAL   '
-        elif vals[0] == '\n6':
-            vals[0] = '  LIBRE    '
-        else:
-            vals[0] = '¡¡¡ERROR!!!'
-        for i in range(10,15):
-            if int(vals[i]) < 10:
-                vals[i] = '0'+vals[i]
-        for i in range(2,6):
-            if int(vals[i]) < 10:
-                vals[i] = ' '+vals[i]
-        clear()
-        print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+"==========================="+Style.RESET_ALL)
-        if vals[1] == '1':
-            print(Fore.BLUE+Back.LIGHTWHITE_EX+Style.DIM+"  ESTADO TERMO  "+Style.RESET_ALL+
-                  Fore.GREEN+Back.BLUE+Style.BRIGHT+f" ENCENDIDO " + Style.RESET_ALL)
-        elif vals[1] == '0':
-            print(Fore.BLUE+Back.LIGHTWHITE_EX+Style.DIM+"  ESTADO TERMO  "+Style.RESET_ALL+
-                  Fore.RED+Back.BLUE+Style.BRIGHT+f"  APAGADO  " + Style.RESET_ALL)
-        print(Fore.BLUE+Back.LIGHTWHITE_EX+Style.DIM+"  MODO          "+Style.RESET_ALL+
-              Fore.LIGHTRED_EX+Back.BLUE+Style.BRIGHT+f"{vals[0]}" + Style.RESET_ALL)
-        print(Fore.LIGHTGREEN_EX+Back.LIGHTBLACK_EX+
-              f"   {vals[10]}:{vals[11]}:{vals[12]}   {vals[13]}/{vals[14]}/{vals[15]}   "+
-              Style.RESET_ALL)
-        print(Fore.BLUE+Back.LIGHTWHITE_EX+Style.DIM+"  ON-1  "+Style.RESET_ALL+
-              Fore.LIGHTRED_EX+Back.BLUE+Style.BRIGHT+f"  {vals[2]}  " + Style.RESET_ALL, end='')
-        print(Fore.BLUE+Back.LIGHTWHITE_EX+Style.DIM+" OFF-1 "+Style.RESET_ALL+
-              Fore.LIGHTRED_EX+Back.BLUE+Style.BRIGHT+f"  {vals[3]}  " + Style.RESET_ALL)
-        print(Fore.BLUE+Back.LIGHTWHITE_EX+Style.DIM+"  ON-2  "+Style.RESET_ALL+
-              Fore.LIGHTRED_EX+Back.BLUE+Style.BRIGHT+f"  {vals[4]}  " + Style.RESET_ALL, end='')
-        print(Fore.BLUE+Back.LIGHTWHITE_EX+Style.DIM+" OFF-2 "+Style.RESET_ALL+
-              Fore.LIGHTRED_EX+Back.BLUE+Style.BRIGHT+f"  {vals[5]}  " + Style.RESET_ALL)
-        print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+"==========================="+Style.RESET_ALL)
-        print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+"     Menu de Opciones      "+Style.RESET_ALL)
-        print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+"                           "+Style.RESET_ALL)
-        print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+" 1.- Modo Autonomo         "+Style.RESET_ALL)
-        print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+" 2.- Ajustar hora y fecha  "+Style.RESET_ALL)
-        print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+" 3.- Ajustar temporizador  "+Style.RESET_ALL)
-        print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+" 4.- Calibrar servo        "+Style.RESET_ALL)
-        print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+" 5.- Modo Manual           "+Style.RESET_ALL)
-        print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+" 6.- Modo Libre            "+Style.RESET_ALL)
-        print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+" 0.- Salir                 "+Style.RESET_ALL)
-        print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+" ⏎.- Actualizar            "+Style.RESET_ALL)
-        print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+"                           "+Style.RESET_ALL)
-        print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+" Ingresa una opción        "+Style.RESET_ALL,
-              end='\b\b\b\b\b\b')
-    elif pantalla == '1':
-        print(Fore.MAGENTA+Back.BLUE+Style.BRIGHT+vals+Style.RESET_ALL)
-    elif pantalla == '2':
-        for i in range(0,5):
-            if int(vals[i]) < 10 and vals[i][0:1] != '0' :
-                vals[i] = '0'+vals[i]
-        clear()
-        print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+"==========================="+Style.RESET_ALL)
-        print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+"  Valores actuales en RTC  "+Style.RESET_ALL)
-        print(Fore.LIGHTGREEN_EX+Back.LIGHTBLACK_EX+
-              f"   Hora  :   {vals[0]}:{vals[1]}:{vals[2]}      "+Style.RESET_ALL)
-        print(Fore.LIGHTGREEN_EX+Back.LIGHTBLACK_EX+
-              f"   Fecha :   {vals[3]}/{vals[4]}/{vals[5]}    "+Style.RESET_ALL)
-        print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+"==========================="+Style.RESET_ALL)
-        print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+"                           "+Style.RESET_ALL)
-        print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+"  Ajustando fecha y hora   "+Style.RESET_ALL)
-        print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+"                           "+Style.RESET_ALL)
-    elif pantalla == '3':
-        for i in range(0,4):
-            if int(vals[i]) < 10 and vals[i][0:1] != ' ':
-                vals[i] = ' '+vals[i]
-        clear()
-        print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+"==========================="+Style.RESET_ALL)
-        print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+"   Horario Temporizador    "+Style.RESET_ALL)
-        print(Fore.BLUE+Back.LIGHTWHITE_EX+Style.DIM+"  ON-1  "+Style.RESET_ALL+
-          Fore.LIGHTRED_EX+Back.BLUE+Style.BRIGHT+f"  {vals[0]}  " + Style.RESET_ALL, end='')
-        print(Fore.BLUE+Back.LIGHTWHITE_EX+Style.DIM+" OFF-1 "+Style.RESET_ALL+
-          Fore.LIGHTRED_EX+Back.BLUE+Style.BRIGHT+f"  {vals[1]}  " + Style.RESET_ALL)
-        print(Fore.BLUE+Back.LIGHTWHITE_EX+Style.DIM+"  ON-2  "+Style.RESET_ALL+
-          Fore.LIGHTRED_EX+Back.BLUE+Style.BRIGHT+f"  {vals[2]}  " + Style.RESET_ALL, end='')
-        print(Fore.BLUE+Back.LIGHTWHITE_EX+Style.DIM+" OFF-2 "+Style.RESET_ALL+
-          Fore.LIGHTRED_EX+Back.BLUE+Style.BRIGHT+f"  {vals[3]}  " + Style.RESET_ALL)
-        print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+"==========================="+Style.RESET_ALL)
-        print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+"                           "+Style.RESET_ALL)
-        print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+"   Ingresa nuevo horario   "+Style.RESET_ALL)
-        print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+"                           "+Style.RESET_ALL)
-    elif pantalla == '4':
-        for i in range(0,4):
-            if int(vals[i]) < 100:
-                vals[i] = ' '+vals[i]
-        clear()
-        print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+"==========================="+Style.RESET_ALL)
-        print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+"   Configuracion Actual    "+Style.RESET_ALL)
-        print(Fore.BLUE+Back.LIGHTWHITE_EX+Style.DIM+"  1 Posición ON   "+Style.RESET_ALL+
-          Fore.LIGHTRED_EX+Back.BLUE+Style.BRIGHT+f"  {vals[0]}    " + Style.RESET_ALL)
-        print(Fore.BLUE+Back.LIGHTWHITE_EX+Style.DIM+"  2 Posición ON   "+Style.RESET_ALL+
-          Fore.LIGHTRED_EX+Back.BLUE+Style.BRIGHT+f"  {vals[1]}    " + Style.RESET_ALL)
-        print(Fore.BLUE+Back.LIGHTWHITE_EX+Style.DIM+"  1 Posición OFF  "+Style.RESET_ALL+
-          Fore.LIGHTRED_EX+Back.BLUE+Style.BRIGHT+f"  {vals[2]}    " + Style.RESET_ALL)
-        print(Fore.BLUE+Back.LIGHTWHITE_EX+Style.DIM+"  2 Posición OFF  "+Style.RESET_ALL+
-          Fore.LIGHTRED_EX+Back.BLUE+Style.BRIGHT+f"  {vals[3]}    " + Style.RESET_ALL)
-        print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+"==========================="+Style.RESET_ALL)
-        print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+"                           "+Style.RESET_ALL)
-        print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+"  Ingresa nuevos valores   "+Style.RESET_ALL)
-        print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+"                           "+Style.RESET_ALL)
-    elif pantalla == '5':
-        clear()
-        print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+"==========================="+Style.RESET_ALL)
-        print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+"   Accionamiento Manual    "+Style.RESET_ALL)
-        if vals[0] == '1':
-            print(Fore.BLUE+Back.LIGHTWHITE_EX+Style.DIM+"  ESTADO TERMO  "+Style.RESET_ALL+
-                  Fore.GREEN+Back.BLUE+Style.BRIGHT+f" ENCENDIDO " + Style.RESET_ALL)
-        elif vals[0] == '0':
-            print(Fore.BLUE+Back.LIGHTWHITE_EX+Style.DIM+"  ESTADO TERMO  "+Style.RESET_ALL+
-                  Fore.RED+Back.BLUE+Style.BRIGHT+f"  APAGADO  " + Style.RESET_ALL)
-        print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+"==========================="+Style.RESET_ALL)
-        print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+"                           "+Style.RESET_ALL)
-        print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+"     Encender o Apagar     "+Style.RESET_ALL)
-        print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+"                           "+Style.RESET_ALL)
-    elif pantalla == '6':
-        clear()
-        print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+"==========================="+Style.RESET_ALL)
-        print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+"    Movimiento Libre       "+Style.RESET_ALL)
-        print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+"==========================="+Style.RESET_ALL)
-        print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+"                           "+Style.RESET_ALL)
-        print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+" Ingresa posición (16..164)"+Style.RESET_ALL)
-        print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+"                           "+Style.RESET_ALL)
 
-def solicita_dato(valid, mensaje):
-    invalido = True
-    while invalido:
+intentos=0
+
+def datos_a_lista() -> list[str] : 
+    """Retorna el str recibido de consultas() como una lista, valida el largo
+    de la lista, añade 0 o ' ' a valores, según sea necesario para el correcto
+    formateo del texto a mostrar.
+
+    :returns: list[str] ( len(list) = 16 )
+    """
+    datos = []
+    global intentos
+    while True:
         try:
-            dato = input(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+mensaje+Style.RESET_ALL)
-            dato = int(dato)
-            if valid[0] < dato < valid[1]:
-                invalido = False
-                return dato
-            raise ValueError
-        except ValueError:
-            print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+
-                  "Ingresa un número válido  "+Style.RESET_ALL)
-
-def solicita_dato_str(valid, mensaje):
-    invalido = True
-    while invalido:
-        try:
-            dato = input(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+mensaje+Style.RESET_ALL)
-            if dato in valid:
-                invalido = False
-                return dato
-            raise ValueError
-        except ValueError:
-            print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+
-                  "  Debes ingresar \'on\' u \'off\' "+Style.RESET_ALL)
-
-intentos = 0
-while True:
-    #res[1] = 'ENCENDIDO' if res[1] == '1' else 'APAGADO' if '0' else ''
-    res = []
-    try:
-        clear()
-        resp = consultas('')
-        for var in resp.split(','):
-            res.append(var)
-        assert len(res) == 16
-        pantallas('', res)
-        opc = input(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+":"+Style.RESET_ALL)
-        if opc == '0':
-            sys.exit()
-        elif opc == '1':
-            resp = consultas('/auto')
-            print(Fore.MAGENTA+Back.BLUE+Style.BRIGHT+resp+Style.RESET_ALL)
-            sleep(8)
+            resp = consultas('')
+            for var in resp.split(','):
+                datos.append(var)
+            assert len(datos) == 16
+            for i in range(10,15):
+                if int(datos[i]) < 10:
+                    datos[i] = '0'+datos[i]
+            for i in range(2,6):
+                if int(datos[i]) < 10:
+                    datos[i] = ' '+datos[i]
             intentos = 0
-        elif opc == '2':
-            pantallas('2',[res[10], res[11], res[12], res[13], res[14], res[15]])
-            resp = consultas('/sethora', opc, solicita_dato((0,32),'        DIA       : '),
-                                              solicita_dato((0,13),'        MES       : '),
-                                              solicita_dato((2020,2100),'        AÑO       : '),
-                                              solicita_dato((-1,24),'       HORA       : '),
-                                              solicita_dato((-1,60),'       MINUTO     : '),
-                                              solicita_dato((-1,60),'       SEGUNDO    : '))
-            print(Fore.MAGENTA+Back.BLUE+Style.BRIGHT+resp+Style.RESET_ALL)
-            sleep(8)
-        elif opc == '3':
-            pantallas('3',[res[2], res[3], res[4], res[5]])
-            resp = consultas('/horasAcc', opc,
-                                         solicita_dato((-1,24),'    1er Encendido      : '),
-                                         solicita_dato((-1,24),'    1er Apagado        : '),
-                                         solicita_dato((-1,24),'    2do Ecendido (opc.): '),
-                                         solicita_dato((-1,24),'    2do Apagado  (opc.): '))
-            print(Fore.MAGENTA+Back.BLUE+Style.BRIGHT+resp+Style.RESET_ALL)
-            sleep(8)
-        elif opc == '4':
-            pantallas('4',[res[6], res[7], res[8], res[9]])
-            resp = consultas('/setservo', opc,
-                                          solicita_dato((15,165),' 1ra Posición Encendido:'),
-                                          solicita_dato((15,165),' 2ra Posición Encendido:'),
-                                          solicita_dato((15,165),' 1ra Posición Apagado  :'),
-                                          solicita_dato((15,165),' 2da Posición Apagado  :'))
-            print(Fore.MAGENTA+Back.BLUE+Style.BRIGHT+resp+Style.RESET_ALL)
-            sleep(8)
-        elif opc == '5':
-            pantallas('5',[res[1]])
-            resp = consultas('/accion', opc, solicita_dato_str(('on','off'),
-                             ' Ingresa \'on\' u \'off\': '))
-            print(Fore.MAGENTA+Back.BLUE+Style.BRIGHT+resp+Style.RESET_ALL)
-            sleep(8)
-        elif opc == '6':
-            pantallas('6',[res[1]])
-            resp = consultas('/setlibre', opc, solicita_dato((15,165),'  Ingresa posición     :'))
-            print(Fore.MAGENTA+Back.BLUE+Style.BRIGHT+resp+Style.RESET_ALL)
-            sleep(8)
-        elif opc == '':
-            print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+"                           "+
-                  Style.RESET_ALL)
-            print(Fore.RED+Back.YELLOW+Style.BRIGHT+"      Actualizando...      "+
-                  Style.RESET_ALL)
-            print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+"                           "+
-                  Style.RESET_ALL)
-            sleep(1.5)
-        else:
-            print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+"                           "+
-                  Style.RESET_ALL)
-            print(Fore.RED+Back.YELLOW+Style.BRIGHT+"     Opción incorrecta     "+
-                  Style.RESET_ALL)
-            print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+"                           "+
-                  Style.RESET_ALL)
-            sleep(1.5)
-    except KeyboardInterrupt:
-        sys.exit()
-    except AssertionError:
-        clear()
-        intentos += 1
-        print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+"                           "+Style.RESET_ALL)
-        print(Fore.RED+Back.YELLOW+Style.BRIGHT+"  Arduino no disponible    "+Style.RESET_ALL)
-        print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+f"  Intentando nuevamente ({intentos+1}) "+
-              Style.RESET_ALL)
-        print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+"                           "+Style.RESET_ALL)
-        intentos += 1
-        sleep(2)
-    except ConnectionError:
-        clear()
-        print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+"                           "+Style.RESET_ALL)
-        print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+f"  Intentando conexión ({intentos+1})  "+
-              Style.RESET_ALL)
-        print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+"                           "+Style.RESET_ALL)
-        intentos += 1
-        sleep(2)
-    except OSError:
-        clear()
-        print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+"                           "+Style.RESET_ALL)
-        print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+f"  Intentando conexión ({intentos+1})  "+
-              Style.RESET_ALL)
-        print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+"                           "+Style.RESET_ALL)
-        intentos += 1
-        sleep(2)
-    if intentos > 4:
-        print(Fore.RED+Back.YELLOW+Style.BRIGHT+" Imposible conectar con    "+Style.RESET_ALL)
-        print(Fore.RED+Back.YELLOW+Style.BRIGHT+" ESP, o Arduino, verfica   "+Style.RESET_ALL)
-        print(Fore.RED+Back.YELLOW+Style.BRIGHT+" IP, conexión o estado de  "+Style.RESET_ALL)
-        print(Fore.RED+Back.YELLOW+Style.BRIGHT+     " de los dispositivos.      "+Style.RESET_ALL)
-        print(Fore.BLUE+Back.LIGHTBLACK_EX+Style.DIM+"                           "+Style.RESET_ALL)
-        sys.exit()
+            return datos
+        except KeyboardInterrupt:
+            sys.exit()
+        except AssertionError:
+            vt.resp_conex('assert', intentos)
+            intentos += 1
+            sleep(2)
+        except ConnectionError:
+            vt.resp_conex('conexion', intentos)
+            intentos += 1
+            sleep(2)
+        except OSError:
+            vt.resp_conex('oserror', intentos)
+            intentos += 1
+            sleep(2)
+        if intentos > 4:
+            vt.resp_conex()
+            sys.exit()
 
+
+def main():
+    global intentos
+    while True:
+        # Lista con valores de los datos recibidos
+        vals = datos_a_lista() 
+        clear()
+        vt.pant_principal(vals[0], vals[1], vals[10:16], vals[2:6])
+        modo_user = vt.entrada_usuario()
+        match modo_user:
+            case 's':
+                sys.exit()
+            case '1':
+                #vt.pant_test_valores(vals)
+                vt.respuesta_config(consultas('/auto'))
+                intentos = 0
+                sleep(3)
+            case'2':
+                vt.pant_config_fecha(vals[10:16])
+                resp_user = vt.entrada_usuario('/sethora')
+                vt.respuesta_config(consultas('/sethora', modo_user, resp_user))
+                intentos = 0
+                sleep(5)
+            case '3':
+                vt.pant_termporizador(vals[2:6])
+                resp_user = vt.entrada_usuario('/horasAcc')
+                vt.respuesta_config(consultas('/horasAcc', modo_user, resp_user))
+                intentos = 0
+                sleep(5)
+            case '4':
+                pos_servo = []
+                for val in vals[6:10]:
+                    if int(val) < 100:
+                        pos_servo.append(' '+val)
+                    else:
+                        pos_servo.append(val)
+                vt.pant_posic_servo(pos_servo)
+                resp_user = vt.entrada_usuario('/setservo')
+                vt.respuesta_config(consultas('/setservo', modo_user, resp_user))
+                intentos = 0
+                sleep(5)
+            case '5':
+                vt.pant_accion_manual(vals[1])
+                resp_user = vt.entrada_usuario('/accion')
+                vt.respuesta_config(consultas('/accion', modo_user, resp_user))
+                intentos = 0
+                sleep(5)
+            case '6':
+                vt.pant_servo_manual()
+                resp_user = vt.entrada_usuario('/setlibre')
+                vt.respuesta_config(consultas('/setlibre', modo_user, resp_user))
+                intentos = 0
+                sleep(5)
+            case '':
+                vt.respuesta_info()
+                sleep(1.5)
+            case 'v':
+                vt.respuesta_info('volver')
+                intentos = 0
+                sleep(1.5)
+            case _:
+                modo_user = vt.entrada_usuario()
+                vt.respuesta_info('error')
+                sleep(1.5)
+
+
+if __name__ == "__main__":
+    main()

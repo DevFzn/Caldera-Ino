@@ -1,7 +1,25 @@
-## Utilidades  
+# Utilidades  
   Scripts para enviar peticiones web al ESP.
 
-### caldera.sh
+## Bash
+```
+─ 📂️ scripts
+  ├── 📄️ caldera.sh
+  └── 📄️ config.cfg
+```
+
+Archivo de configuración
+***./config.cfg***
+```cfg
+[esp01]
+URL = <direcion_ESP>
+```
+Dependencias
+- curl
+- grep
+- cut
+
+Correr: `  ./caldera.sh  `
 
 ```
 ==============================
@@ -29,7 +47,27 @@
   Ingresa Opcion :
 
 ```
+----
 
-### caldera.py
+## Python
+```
+─ 📂️ scripts
+  ├── 📄️ caldera.py
+  ├── 📄️ config.cfg
+  └── 📄️ vista_term.py
+```
+
+Archivo de configuración
+***./config.cfg***
+```cfg
+[esp01]
+URL = <direcion_ESP>
+```
+
+Dependencias:
+- requests
+- colorama
+
+Correr: `  ./caldera.py  ` o `  python caldera.py  `
 
 ![python_script](./script_python.png)
