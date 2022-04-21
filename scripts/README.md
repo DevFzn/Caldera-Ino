@@ -50,6 +50,7 @@ Correr: `  ./caldera.sh  `
 ----
 
 ## Python
+versión ***Python >= 3.10***  
 ```
 ─ 📂️ scripts
   ├── 📄️ caldera.py
@@ -68,6 +69,6 @@ Dependencias:
 - requests
 - colorama
 
-Correr: `  ./caldera.py  ` o `  python caldera.py  `
+Correr: ` ./caldera.py ` o ` python caldera.py `
 
 ![python_script](./script_python.png)

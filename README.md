@@ -36,7 +36,7 @@ El modo 6 permite mover libremente el servo (desde 16 hasta 144). Útil para pro
 
 ## Arduino
 Control de horario de encendido caldera electrica.  
-Trabaja de forma autonoma y/o comandado por puerto serie (**115200 baudio**).    
+Trabaja de forma autonoma y/o comandado por puerto serie (**115200 baudio**).   
 
 * 3 Modos de Operación
   - Automatizado (1, por defecto)
@@ -69,6 +69,25 @@ ej: `1,0,5,7,16,18,120,90,45,62,1,42,24,14,7,2021`
 | | | |  |  |  |  |  |  |  |  |  |  | | 2021_ año en RTC
 1,0,5,7,16,18,120,90,45,62,1,42,24,14,7,2021
 ```
+
+### Configuración
+
+Envío de datos a modificar por puerto serie de Arduino (**115200 baudio**).  
+ejemplos: 
+
+- Configurar hora **19:35:15** y fecha **19/04/2022**.
+  - `2,19,4,2022,19,35,15`
+- Configurar horas de funcionamiento de **6 a 8** y **17 a 18 hrs**.
+  - `3,6,8,17,18`
+- Configurar posiciones de funcionamiento, encendido **120 y 105**, apagado **45 y 62**.
+  - `4,120,105,45,62`
+- Cambiar a modo manual y apagar termo.
+  - `5,0`
+- Cambiar a modo libre y mover el servo a posición **100**.
+  - `6,100`
+- Cambiar a modo autónomo (**modo 1**).
+  - `1`
+
 -----
 
 ## ESP01
@@ -83,8 +102,12 @@ const char* password = "password";
 ```
 
 #### Urls
+
+**Consulta valores en arduino**  
 * **/** : muestra valores actuales de variables.
     - ej. `http://192.168.65.10/`
+
+**Configuración**
 * '**/accion** : accionamiento manual, espera argumentos on u off.
     - ej. `http://192.168.65.10/accion?mod=5&acc=on`
 * **/sethora** : configurar de fecha y hora.
@@ -97,6 +120,7 @@ const char* password = "password";
     - ej. `http://192.168.65.10/setlibre?mod=6&pos=125`
 * **/auto** : Modo autonomo.
     - ej. `http://192.168.65.10/auto`
+
 -----
 
 ## Utilidades  
@@ -134,6 +158,7 @@ const char* password = "password";
 ```
 
 ### Python
+***Python >= 3.10***  
 [caldera.py](https://gitea.kickto.net/SyDeVoS/Caldera-ino/src/branch/master/scripts#python)
 
 ![python_script](./scripts/script_python.png)

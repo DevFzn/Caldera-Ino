@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.10
 
 """
     Script de control Caldera automatizada [Arduino]+[ESP01]
