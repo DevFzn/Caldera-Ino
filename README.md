@@ -108,7 +108,7 @@ const char* password = "password";
     - ej. `http://192.168.65.10/`
 
 **Configuración**
-* '**/accion** : accionamiento manual, espera argumentos on u off.
+* **/accion** : accionamiento manual, espera argumentos on u off.
     - ej. `http://192.168.65.10/accion?mod=5&acc=on`
 * **/sethora** : configurar de fecha y hora.
     - ej. `http://192.168.65.10/sethora?mod=2&dia=14&mes=7&año=2021&hrs=1&mins=33&segs=24`
