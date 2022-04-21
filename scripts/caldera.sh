@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-IP_CALDERA=$(grep URL config.cfg | cut -d'=' -f2)
+IP_CALDERA=$(grep URL esp_conf.cfg | cut -d'=' -f2)
 
 estado_caldera() {
     RESP=$(curl -s ${IP_CALDERA})

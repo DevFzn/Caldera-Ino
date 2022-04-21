@@ -75,7 +75,7 @@ diag_accman  = [ diag_bar, '   Accionamiento Manual    ', diag_state[1:5],
                  diag_bar, diag_spc, '    Encender o Apagar ?    ', diag_spc,
                  ' Ingresa \'on\' u \'off\':     \b\b\b\b' ]
 
-diag_servman = [ diag_bar, '    Movimiento Libre       ', diag_bar, diag_spc, 
+diag_servman = [ diag_bar, '     Movimiento Libre      ', diag_bar, diag_spc, 
                  'Posiciónes validas (16-164)', diag_spc ,
                  '   Ingresa posición :      \b\b\b\b\b' ]
 

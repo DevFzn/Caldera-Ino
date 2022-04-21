@@ -5,11 +5,11 @@
 ```
 ─ 📂️ scripts
   ├── 📄️ caldera.sh
-  └── 📄️ config.cfg
+  └── 📄️ esp_conf.cfg
 ```
 
 Archivo de configuración
-***./config.cfg***
+***./esp_conf.cfg***
 ```cfg
 [esp01]
 URL = <direcion_ESP>
@@ -53,12 +53,12 @@ Correr: `  ./caldera.sh  `
 ```
 ─ 📂️ scripts
   ├── 📄️ caldera.py
-  ├── 📄️ config.cfg
+  ├── 📄️ esp_conf.cfg
   └── 📄️ vista_term.py
 ```
 
 Archivo de configuración
-***./config.cfg***
+***./esp_conf.cfg***
 ```cfg
 [esp01]
 URL = <direcion_ESP>

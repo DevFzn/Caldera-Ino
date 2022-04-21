@@ -29,8 +29,8 @@ El modo 6 permite mover libremente el servo (desde 16 hasta 144). Útil para pro
 **ESP-01** funciona como interface web basica entre el usuario y el puerto serie de arduino.  
 
 ### Herramientas de control (scripts)
-- [caldera.sh](.scripts/caldera.sh) (bash)
-- [caldera.py](.scripts/caldera.py) (python)
+- [caldera.sh](https://gitea.kickto.net/SyDeVoS/Caldera-ino/src/branch/master/scripts#bash) (bash)
+- [caldera.py](https://gitea.kickto.net/SyDeVoS/Caldera-ino/src/branch/master/scripts#python) (python)
 
 -----
 
@@ -48,28 +48,26 @@ Trabaja de forma autonoma y/o comandado por puerto serie (**115200 baudio**).
   - Configuración de posiciones de encendido y apagado (4)
 
 
-Arduino envia cada segundo los valores actuales de las variables de control al puerto serie.
+Arduino envia cada segundo los valores actuales de las variables de control al puerto serie.  
+ej: `1,0,5,7,16,18,120,90,45,62,1,42,24,14,7,2021`
 ```
-  ej.
-  1,0,5,7,16,18,120,90,45,62,1,42,24,14,7,2021
-
-  1 ______________________________________________ modo, 
-  | 0 ____________________________________________ estado termo (O = apagado, 1 = Encendido)
-  | | 5 __________________________________________ hora de encendido
-  | | | 7 ________________________________________ hora de apagado
-  | | | | 16 _____________________________________ 2da hora de encendido (opcional)
-  | | | |  | 18 __________________________________ 2da hora de apagado (opcional)
-  | | | |  |  | 120 ______________________________ 1ra posicion encendido
-  | | | |  |  |  |  90 ___________________________ 2ra posicion encendido
-  | | | |  |  |  |  |  45 ________________________ 1ra posicion apagado
-  | | | |  |  |  |  |  |  62 _____________________ 2ra posicion apagado
-  | | | |  |  |  |  |  |  |  1 ___________________ hora en RTC
-  | | | |  |  |  |  |  |  |  | 42 ________________ minutos en RTC
-  | | | |  |  |  |  |  |  |  |  | 24 _____________ segundos en RTC
-  | | | |  |  |  |  |  |  |  |  |  | 14 __________ dia en RTC
-  | | | |  |  |  |  |  |  |  |  |  |  | 7 ________ mes en RTC
-  | | | |  |  |  |  |  |  |  |  |  |  | | 2021 ___ año en RTC
-  1,0,5,7,16,18,120,90,45,62,1,42,24,14,7,2021
+1____________________________________________ modo
+| 0__________________________________________ estado termo (O=apagado, 1=Encendido)
+| | 5________________________________________ hora de encendido
+| | | 7______________________________________ hora de apagado
+| | | | 16___________________________________ 2da hora de encendido (opcional)
+| | | |  | 18________________________________ 2da hora de apagado (opcional)
+| | | |  |  | 120____________________________ 1ra posicion encendido
+| | | |  |  |  |  90_________________________ 2ra posicion encendido
+| | | |  |  |  |  |  45______________________ 1ra posicion apagado
+| | | |  |  |  |  |  |  62___________________ 2ra posicion apagado
+| | | |  |  |  |  |  |  |  1_________________ hora en RTC
+| | | |  |  |  |  |  |  |  | 42______________ minutos en RTC
+| | | |  |  |  |  |  |  |  |  | 24___________ segundos en RTC
+| | | |  |  |  |  |  |  |  |  |  | 14________ dia en RTC
+| | | |  |  |  |  |  |  |  |  |  |  | 7______ mes en RTC
+| | | |  |  |  |  |  |  |  |  |  |  | | 2021_ año en RTC
+1,0,5,7,16,18,120,90,45,62,1,42,24,14,7,2021
 ```
 -----
 
@@ -85,20 +83,20 @@ const char* password = "password";
 ```
 
 #### Urls
-* '**/**' : muestra valores actuales de variables.
-    - ej. http://192.168.65.10/
-* '**/accion**' : accionamiento manual, espera argumentos on u off.
-    - ej. http://192.168.65.10/accion?mod=5&acc=on
-* '**/sethora**' : configurar de fecha y hora.
-    - ej. http://192.168.65.10/sethora?mod=2&dia=14&mes=7&año=2021&hrs=1&mins=33&segs=24 
-* '**/horasAcc**' : configurar horas de funcionamiento.
-    - ej. http://192.168.65.10/horasAcc?mod=3&hrOn1=5&hrOff1=7&hrOn2=16&hrOff2=18
-* '**/setservo**' : configurar posiciones de encendido y apagado.
-    - ej. http://192.168.65.10/setservo?mod=4&posOn1=110&posOn2=85&posOff1=45&posOff2=62
-* '**/setlibre**' : Mover servo libremente (15 < posicion > 165).
-    - ej. http://192.168.65.10/setlibre?mod=6&pos=125
-* '**/auto**' : Modo autonomo.
-    - ej. http://192.168.65.10/auto
+* **/** : muestra valores actuales de variables.
+    - ej. `http://192.168.65.10/`
+* '**/accion** : accionamiento manual, espera argumentos on u off.
+    - ej. `http://192.168.65.10/accion?mod=5&acc=on`
+* **/sethora** : configurar de fecha y hora.
+    - ej. `http://192.168.65.10/sethora?mod=2&dia=14&mes=7&año=2021&hrs=1&mins=33&segs=24`
+* **/horasAcc** : configurar horas de funcionamiento.
+    - ej. `http://192.168.65.10/horasAcc?mod=3&hrOn1=5&hrOff1=7&hrOn2=16&hrOff2=18`
+* **/setservo** : configurar posiciones de encendido y apagado.
+    - ej. `http://192.168.65.10/setservo?mod=4&posOn1=110&posOn2=85&posOff1=45&posOff2=62`
+* **/setlibre** : Mover servo libremente (15 < posicion > 165).
+    - ej. `http://192.168.65.10/setlibre?mod=6&pos=125`
+* **/auto** : Modo autonomo.
+    - ej. `http://192.168.65.10/auto`
 -----
 
 ## Utilidades  
@@ -106,7 +104,7 @@ const char* password = "password";
 
 
 ### Bash
-[caldera.sh](./scripts/caldera.sh)
+[caldera.sh](https://gitea.kickto.net/SyDeVoS/Caldera-ino/src/branch/master/scripts#bash)
 
 ```
 ==============================
@@ -136,6 +134,6 @@ const char* password = "password";
 ```
 
 ### Python
-[caldera.py](./scripts/caldera.py)
+[caldera.py](https://gitea.kickto.net/SyDeVoS/Caldera-ino/src/branch/master/scripts#python)
 
 ![python_script](./scripts/script_python.png)

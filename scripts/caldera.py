@@ -11,18 +11,16 @@ import vista_term as vt
 
 try:
     parser = cfg.ConfigParser()
-    parser.read('config.cfg')
+    parser.read('esp_conf.cfg')
     ESP01 = parser.get('esp01', 'URL')
 except cfg.Error as ex:
-    print('Error al leer archivo de configuración')
+    print('Error al leer archivo de configuración\n', ex)
     sys.exit()
 
 try:
     import requests
 except ModuleNotFoundError as ex:
-    print("Debes instalar los modulos necesarios\n")
-    print(ex)
-    sleep(2)
+    print("Debes instalar los modulos necesarios\n", ex)
     sys.exit()
 
 clear = lambda: os.system('clear') if os.name == 'posix' else os.system('cls')
