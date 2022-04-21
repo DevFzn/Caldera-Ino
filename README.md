@@ -2,21 +2,21 @@
 ***Control de encendido para caldera electrica.***
 
 
-Enciende o apaga el termo según configuración. Admite hasta dos horarios  
-de funcionamiento al día, ajustables en modo 3.  
+Enciende o apaga el termo según configuración. Admite hasta dos horarios de  
+funcionamiento al día, ajustables en **modo 3**.  
 
-El funcionamiento autonomo es la opción por defecto (modo 1).  
+El funcionamiento autonomo es la opción por defecto (**modo 1**).  
 
 Funcionamiento manual espera instrucción para realizar acción de encendido  
-o apagado (modo 5).  
+o apagado (**modo 5**).  
 
-Hora y fecha ajustables en el modo 2.  
+Hora y fecha ajustables en el **modo 2**.  
 
-Posiciones del servo al encender o apagar el termo (modo 4). Son dos posiciones,  
+Posiciones del servo al encender o apagar el termo (**modo 4**). Son dos posiciones,  
 ya que el servo realiza movimiento repetitivo para asegurar el accionamiento  
 mecánico del interruptor del termo.  
 
-El modo 6 permite mover libremente el servo (desde 16 hasta 144). Útil para probar ajustes.  
+El **modo 6** permite mover libremente el servo (desde 16 hasta 144). Útil para probar ajustes.  
 
 ### Hardware utilizado:
 - [ATmega328p](https://en.wikipedia.org/wiki/Arduino_Nano) (ArduinoNano old bootloader)  
