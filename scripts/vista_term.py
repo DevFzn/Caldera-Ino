@@ -60,8 +60,9 @@ diag_error   = [ ' Ingresa un número válido! ', '  Debes ingresar \'on\' u \'o
 
 diag_settimer = [ diag_bar,'   Horario Temporizador    ', '  ON-1  ', ' OFF-1 ',
                   '  ON-2  ',' OFF-2 ', diag_bar, diag_spc, '   Ingresa nuevo horario   ',
-                  diag_spc, '    1er Encendido      : ', '    1er Apagado        : ',
-                  '    2do Ecendido (opc.): ', '    2do Apagado  (opc.): ' ]
+                  diag_spc, '    1er Encendido  :       \b\b\b\b\b\b',
+                  '    1er Apagado    :       \b\b\b\b\b\b',
+                  '    2do Ecendido (opc.):   \b\b','    2do Apagado  (opc.):   \b\b' ]
 
 diag_posservo = [ diag_bar,'   Configuracion Actual    ', '  1 Posición ON   ', 
                   '  2 Posición ON   ', '  1 Posición OFF  ','  2 Posición OFF  ',

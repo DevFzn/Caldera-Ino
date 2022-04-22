@@ -42,7 +42,7 @@ void handleSEThora() {
         msj_a_arduino += server.arg(4)+",";
         msj_a_arduino += server.arg(5)+",";
         msj_a_arduino += server.arg(6);
-        mensaje_web = "Fecha y hora enviadas";
+        mensaje_web = "   Fecha y hora enviadas   ";
         Serial.println(msj_a_arduino);
     } else { 
         mensaje_web = "Opcion no valida\n<mod=2&dia= &mes= &año= &hrs= &mins= &segs= >";
@@ -58,7 +58,7 @@ void handleHorasAcc() {
         msj_a_arduino += server.arg(2)+",";
         msj_a_arduino += server.arg(3)+",";
         msj_a_arduino += server.arg(4);
-        mensaje_web = "Horas enviadas a arduino";
+        mensaje_web = " Horas enviadas a arduino  ";
         Serial.println(msj_a_arduino);
     } else { 
         mensaje_web = "Opcion no valida\n<mod=3&hrOn1= &hrOff1= &hrOn2= &hrOff2= >";
@@ -74,7 +74,7 @@ void handleSETservo() {
         msj_a_arduino += server.arg(2)+",";
         msj_a_arduino += server.arg(3)+",";
         msj_a_arduino += server.arg(4);
-        mensaje_web = "Posiciones del servo enviadas";
+        mensaje_web = " Posiciones servo enviadas ";
         Serial.println(msj_a_arduino);
     } else { 
         mensaje_web = "Opcion no valida\n<mod=4&posOn1= &posOn2= &posOff1= &posOff2= >";
@@ -87,7 +87,7 @@ void handleSETlibre() {
     if(server.arg(0) == "6") {
         msj_a_arduino = "6,";
         msj_a_arduino += server.arg(1);
-        mensaje_web = "Posicion del servo enviada";
+        mensaje_web = "Posicion del servo enviada ";
         Serial.println(msj_a_arduino);
     } else {
         mensaje_web = "Opcion no valida\n<mod=6&posServ= >";
@@ -98,7 +98,7 @@ void handleSETlibre() {
 void handleSETauto() {
     String mensaje_web, msj_a_arduino;
     msj_a_arduino = "1";
-    mensaje_web = "Enviando modo 1 (Autonomo)";
+    mensaje_web = "Enviando modo 1 (Autonomo) ";
     Serial.println(msj_a_arduino);
     server.send(200, "text/plain", mensaje_web);
 }

@@ -162,3 +162,25 @@ const char* password = "password";
 [caldera.py](https://gitea.kickto.net/SyDeVoS/Caldera-ino/src/branch/master/scripts#python)
 
 ![python_script](./scripts/script_python.png)
+
+---- 
+
+### Secuencia general
+
+```mermaid
+sequenceDiagram
+    participant Telegram Bot
+    participant Script o web
+    participant ESP01
+    participant Arduino
+    participant Caldera
+    Script o web->>ESP01: Consulta/Modifica estado
+    Note right of Script o web: control total
+    ESP01-->>Script o web: Retorno estado de control
+    Telegram Bot->>ESP01: Solicita Encender/Apagar o cambiar a Modo autonomo
+    Note right of Telegram Bot: control parcial
+    ESP01-->>Telegram Bot: Respuesta
+    ESP01->>Arduino: Consulta/Modifica estado
+    Arduino-->>ESP01: Retorno estado de control
+    Arduino->>Caldera: Enciende o Apaga
+```
