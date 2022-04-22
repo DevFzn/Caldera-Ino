@@ -184,3 +184,5 @@ sequenceDiagram
     Arduino-->>ESP01: Retorno estado de control
     Arduino->>Caldera: Enciende o Apaga
 ```
+
+> *Como crear un [bot de telegram](https://gitea.kickto.net/jp.av.dev/BotsTelegram_Python/src/branch/master/01-blasterbot)?*  
