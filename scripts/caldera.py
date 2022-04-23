@@ -91,16 +91,16 @@ def datos_a_lista() -> list[str] :
         except AssertionError:
             vt.resp_conex('assert', intentos)
             intentos += 1
-            sleep(2)
+            sleep(5)
         except ConnectionError:
             vt.resp_conex('conexion', intentos)
             intentos += 1
-            sleep(2)
+            sleep(5)
         except OSError:
             vt.resp_conex('oserror', intentos)
             intentos += 1
             sleep(2)
-        if intentos > 4:
+        if intentos > 2:
             vt.resp_conex()
             sys.exit()
 
@@ -120,7 +120,7 @@ def main():
                 #vt.pant_test_valores(vals)
                 vt.respuesta_config(consultas('/auto'))
                 intentos = 0
-                sleep(3)
+                sleep(7)
             case'2':
                 vt.pant_config_fecha(vals[10:16])
                 resp_user = vt.entrada_usuario('/sethora')
@@ -150,7 +150,7 @@ def main():
                 resp_user = vt.entrada_usuario('/accion')
                 vt.respuesta_config(consultas('/accion', modo_user, resp_user))
                 intentos = 0
-                sleep(5)
+                sleep(7)
             case '6':
                 vt.pant_servo_manual()
                 resp_user = vt.entrada_usuario('/setlibre')
