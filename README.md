@@ -32,8 +32,6 @@ El **modo 6** permite mover libremente el servo (desde 16 hasta 144). Útil para
 - [caldera.sh](https://gitea.kickto.net/SyDeVoS/Caldera-ino/src/branch/master/scripts#bash) (bash)
 - [caldera.py](https://gitea.kickto.net/SyDeVoS/Caldera-ino/src/branch/master/scripts#python) (python)
 
-Video [demo](#quick-demo-v02)
-
 -----
 
 ## Arduino
