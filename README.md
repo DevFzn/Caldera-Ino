@@ -32,6 +32,8 @@ El **modo 6** permite mover libremente el servo (desde 16 hasta 144). Útil para
 - [caldera.sh](https://gitea.kickto.net/SyDeVoS/Caldera-ino/src/branch/master/scripts#bash) (bash)
 - [caldera.py](https://gitea.kickto.net/SyDeVoS/Caldera-ino/src/branch/master/scripts#python) (python)
 
+Video [demo](#quick-demo-v02)
+
 -----
 
 ## Arduino
@@ -184,5 +186,14 @@ sequenceDiagram
     Arduino-->>ESP01: Retorno estado de control
     Arduino->>Caldera: Enciende o Apaga
 ```
+
+---- 
+
+### Quick demo v0.2
+
+<a href="https://www.youtube.com/watch?v=0JR1YQoTmgw" title="quick demo">
+  <img src="https://img.youtube.com/vi/0JR1YQoTmgw/hqdefault.jpg" alt="demo" />
+</a>
+
 
 > *Como crear un [bot de telegram](https://gitea.kickto.net/jp.av.dev/BotsTelegram_Python/src/branch/master/01-blasterbot)?*  
