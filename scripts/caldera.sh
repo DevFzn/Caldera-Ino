@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-IP_CALDERA=$(grep URL esp_conf.cfg | cut -d'=' -f2)
+IP_CALDERA="$(grep URL esp_conf.cfg | cut -d'=' -f2)"
 
 estado_caldera() {
     RESP=$(curl -s ${IP_CALDERA})
@@ -46,7 +46,7 @@ ejec_orden() {
         6)  ORD="/setlibre?1=6&2=${1}"  ;;
         *)  ORD=""  ;;
       esac
-      curl -s "${IP_CALDERA}${ORD}"
+      curl ${IP_CALDERA}${ORD}
 }
 
 principal() {
@@ -62,7 +62,7 @@ principal() {
     echo 
     read -p "  Ingresa Opcion :" OPC
     case ${OPC} in
-        "1")    echo; curl -s "${IP_CALDERA}/auto"  ;;
+        "1")    echo; curl -s ${IP_CALDERA}'/auto'  ;;
         "2")
             clear
             echo "============================"
