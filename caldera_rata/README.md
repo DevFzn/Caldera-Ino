@@ -23,7 +23,7 @@ El **modo 6** permite mover libremente el servo (desde 16 hasta 144). Útil para
 
 ## Arduino
 Control de horario de encendido caldera electrica.  
-Trabaja de forma autonoma y/o comandado por puerto serie (**115200 baudio**).    
+Trabaja de forma autonoma y/o comandado por puerto serie (**115200 baudio**).  
 
 * 3 Modos de Operación
   - Automatizado (**1**, por defecto)
@@ -45,9 +45,9 @@ ej: `1,0,5,7,16,18,120,90,45,62,1,42,24,14,7,2021`
 | | | | 16___________________________________ 2da hora de encendido (opcional)
 | | | |  | 18________________________________ 2da hora de apagado (opcional)
 | | | |  |  | 120____________________________ 1ra posicion encendido
-| | | |  |  |  |  90_________________________ 2ra posicion encendido
+| | | |  |  |  |  90_________________________ 2da posicion encendido
 | | | |  |  |  |  |  45______________________ 1ra posicion apagado
-| | | |  |  |  |  |  |  62___________________ 2ra posicion apagado
+| | | |  |  |  |  |  |  62___________________ 2da posicion apagado
 | | | |  |  |  |  |  |  |  1_________________ hora en RTC
 | | | |  |  |  |  |  |  |  | 42______________ minutos en RTC
 | | | |  |  |  |  |  |  |  |  | 24___________ segundos en RTC
@@ -60,13 +60,13 @@ ej: `1,0,5,7,16,18,120,90,45,62,1,42,24,14,7,2021`
 ### Configuración
 
 Envío de datos a modificar por puerto serie de Arduino (**115200 baudio**).  
-ejemplos: 
+ejemplos:
 
-- Configurar hora **19:35:15** y fecha **19/04/2022**.
+- Config. hora **19:35:15** y fecha **19/04/2022**.
   - `2,19,4,2022,19,35,15`
-- Configurar horas de funcionamiento de **6 a 8** y **17 a 18 hrs**.
+- Config. horas de funcionamiento de **6 a 8** y **17 a 18 hrs**.
   - `3,6,8,17,18`
-- Configurar posiciones de funcionamiento, encendido **120 y 105**, apagado **45 y 62**.
+- Config. posiciones de funcionamiento, encendido **120 y 105**, apagado **45 y 62**.
   - `4,120,105,45,62`
 - Cambiar a modo manual y apagar termo.
   - `5,0`
