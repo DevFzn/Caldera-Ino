@@ -31,7 +31,7 @@ byte posOFF2;
 byte posTEMP;
 byte cont;
 bool estado_termo;
-bool espera;
+bool sentido;
 bool espera_man;
 bool start;
 byte manual;
@@ -180,27 +180,20 @@ void limpiaSerial() {
 
 void termoACC(byte pos1, byte pos2) {
     myservo_X.write(pos1);
-    espera=0;
+    sentido=0;
     cont=0;
     previoMillisTermo=millis();
     do{
         actualMillis=millis();
-        if(espera==0) {
-            if ((unsigned long)(actualMillis - previoMillisTermo) >= 500) {
+        if ((unsigned long)(actualMillis - previoMillisTermo) >= 500) {
+            if(sentido==0) {
                 myservo_X.write(pos2);
-                espera=1;
-                cont++;
-                previoMillisTermo=millis();
-            }
-        }
-        actualMillis=millis();
-        if(espera==1) {
-            if ((unsigned long)(actualMillis - previoMillisTermo) >= 500) {
+            } else {
                 myservo_X.write(pos1);
-                espera=0;
-                cont++;
-                previoMillisTermo=millis();
             }
+            sentido=!sentido;
+            cont++;
+            previoMillisTermo=millis();
         }
     } while (cont<4);
 }
