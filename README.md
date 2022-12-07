@@ -189,8 +189,8 @@ sequenceDiagram
 
 ### Quick demo v0.2
 
-<a href="https://www.youtube.com/watch?v=0JR1YQoTmgw" title="quick demo">
-  <img src="https://img.youtube.com/vi/0JR1YQoTmgw/hqdefault.jpg" alt="demo" />
+<a href="https://www.youtube.com/watch?v=WXJ52hnwTxs" title="quick demo">
+  <img src="https://img.youtube.com/vi/WXJ52hnwTxs/hqdefault.jpg" alt="demo" />
 </a>
 
 
