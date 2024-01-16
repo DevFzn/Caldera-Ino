@@ -194,4 +194,4 @@ sequenceDiagram
 </a>
 
 
-> *Como crear un [bot de telegram](https://gitea.kickto.net/jp.av.dev/BotsTelegram_Python/src/branch/master/01-blasterbot)?*  
+> *Como crear un [bot de telegram](https://gitea.letz.dev/jp.av.dev/BotsTelegram_Python/src/branch/master/01-blasterbot)?*  
